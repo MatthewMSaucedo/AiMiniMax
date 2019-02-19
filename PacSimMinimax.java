@@ -1,7 +1,7 @@
 /* 
  * University of Central Florida
  * CAP4630
- * Authors: Matthew Saucedo and Daniel Canas
+ * Authors: Matthew Saucedo
  *
  */
 
@@ -130,7 +130,7 @@ public class PacSimMinimax implements PacAction
 		
 		new PacSimMinimax( depth, fname, te, gr, ml );
 		
-		System.out.println("\nAdversarial Search using Minimax by Matthew Saucedo and Daniel Canas:");
+		System.out.println("\nAdversarial Search using Minimax by Matthew Saucedo");
 		System.out.println("\n\tGame board\t: " + fname);
 		System.out.println("\tSearch depth : " + depth + "\n");
 		
