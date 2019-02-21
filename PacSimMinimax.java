@@ -16,6 +16,9 @@ import pacsim.PacUtils;
 import pacsim.PacmanCell;
 import pacsim.BlinkyCell;
 import pacsim.InkyCell;
+import pacsim.WallCell;
+import pacsim.HouseCell;
+import pacsim.GhostCell;
 
 // class to keep track of each simulation run
 class pacRun 
@@ -93,7 +96,41 @@ public class PacSimMinimax implements PacAction
 	
 	public List<PacCell[][]> generatePossibleMovesPac( PacCell[][] grid )
 	{
-		return null;
+		List<PacCell[][]> possibleMoves = new ArrayList<>();
+		
+		int pcX = this.pc.getX();
+		int pcY = this.pc.getY();
+		Point next;
+		
+		// check cell above PacMan
+		if( !(grid[pcX][pcY+1] instanceof WallCell) && !(grid[pcX][pcY+1] instanceof HouseCell) && !(grid[pcX][pcY+1] instanceof GhostCell) )
+		{
+			next = new Point( pcX, pcY+1);
+			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell below PacMan
+		if( !(grid[pcX][pcY-1] instanceof WallCell) && !(grid[pcX][pcY-1] instanceof HouseCell) && !(grid[pcX][pcY-1] instanceof GhostCell) )
+		{
+			next = new Point( pcX, pcY-1);
+			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the right of PacMan
+		if( !(grid[pcX+1][pcY] instanceof WallCell) && !(grid[pcX+1][pcY] instanceof HouseCell) && !(grid[pcX+1][pcY] instanceof GhostCell) )
+		{
+			next = new Point( pcX+1, pcY);
+			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the left of PacMan
+		if( !(grid[pcX-1][pcY] instanceof WallCell) && !(grid[pcX-1][pcY] instanceof HouseCell) && !(grid[pcX-1][pcY] instanceof GhostCell) )
+		{
+			next = new Point( pcX-1, pcY);
+			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+		}
+		
+		return possibleMoves;
 	}
 	
 	public List<PacCell[][]> generatePossibleMovesBlinky( PacCell[][] grid )
