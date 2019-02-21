@@ -52,7 +52,7 @@ class pacRun
 /* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
 {
-	int depth, currentDepth;
+	int depth, currentDepth, initialGoodies = 96;
 	PacmanCell pc;
 	Point ghostA;
 	Point ghostB;
@@ -64,6 +64,21 @@ public class PacSimMinimax implements PacAction
 		
 		PacSim sim = new PacSim( fname, te, gran, max );
 		sim.init( this );
+	}
+	
+	public List<PacCell[][]> generatePossibleMovesPac( PacCell[][] grid )
+	{
+		return null;
+	}
+	
+	public List<PacCell[][]> generatePossibleMovesBlinky( PacCell[][] grid )
+	{
+		return null;
+	}
+	
+	public List<PacCell[][]> generatePossibleMovesInky( PacCell[][] grid )
+	{
+		return null;
 	}
 	
 	public PacFace generateMove( PacCell[][] grid )
@@ -86,10 +101,15 @@ public class PacSimMinimax implements PacAction
 		{
 			return maxValue( grid, alpha, beta );
 		}
-		// MIN's turn to move
+		// Blinky's turn to move
+		else if( true )
+		{
+			return minValueBlinky( grid, alpha, beta );
+		}
+		// Inky's turn to move
 		else
 		{
-			return minValue( grid, alpha, beta );
+			return minValueInky( grid, alpha, beta );
 		}
 	}
 	
@@ -97,6 +117,8 @@ public class PacSimMinimax implements PacAction
 	public int maxValue( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MIN_VALUE;
+		
+		List<PacCell[][]> possibleMoves = generatePossibleMovesPac( grid );
 		
 		// for( PacCell[][] move : possibleMoves )
 		// {
@@ -114,9 +136,33 @@ public class PacSimMinimax implements PacAction
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValue( PacCell[][] grid, int alpha, int beta )
+	public int minValueBlinky( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MAX_VALUE;
+		
+		List<PacCell[][]> possibleMoves = generatePossibleMovesBlinky( grid );
+		
+		// for( PacCell[][] move : possibleMoves )
+		// {
+			// v = Math.min( v, miniMax( move, alpha, beta ) );
+			
+			// if( v <= alpha )
+			// {
+				// return v;
+			// }
+			
+			// beta = Math.min( beta, v );
+		// }
+		
+		return v;
+	}
+	
+	// returns smallest game-state value selected by ideal rational agent
+	public int minValueInky( PacCell[][] grid, int alpha, int beta )
+	{
+		int v = Integer.MAX_VALUE;
+		
+		List<PacCell[][]> possibleMoves = generatePossibleMovesInky( grid );
 		
 		// for( PacCell[][] move : possibleMoves )
 		// {
@@ -137,7 +183,7 @@ public class PacSimMinimax implements PacAction
 	public int evalFunction( PacCell[][] grid )
 	{
 		// returns current score
-		return PacUtils.numFood( grid ) + PacUtils.numPower( grid );
+		return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
 	}
 	
 	public static void main( String[] args )
@@ -196,14 +242,4 @@ public class PacSimMinimax implements PacAction
 		
 		return newFace;
 	}
-	
-	/*
-	
-	* you can calculate current game score by counting how many goodies there are left.
-	
-	* you need to use moveGhost and movePacman in this assignment.
-	
-	* you can check if the object is an instanceof WallCell
-	
-	*/
 }
