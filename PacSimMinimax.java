@@ -20,30 +20,30 @@ class pacRun
 {
 	public int wins, losses, moves;
 	
-	pacRun( void )
+	pacRun()
 	{
 		this.wins = 0;
 		this.losses = 0;
 		this.moves = 0;
 	}
 	
-	win( void )
+	void win()
 	{
 		this.wins = 1;
 	}
 	
-	lose( void )
+	void lose()
 	{
 		this.losses = 1;
 	}
 	
-	move( void )
+	void move()
 	{
 		this.moves++;
 	}
 	
 	// formatting for displaying preliminary run results
-	printResults( void )
+	void printResults()
 	{
 		System.out.println("\t" + this.wins + " wins,\t" + this.losses + " losses,\t" + this.moves + " avg moves");
 	}
@@ -52,7 +52,7 @@ class pacRun
 /* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
 {
-	int depth;
+	int depth, currentDepth;
 	PacmanCell pc;
 	Point ghostA;
 	Point ghostB;
@@ -60,7 +60,7 @@ public class PacSimMinimax implements PacAction
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
 	{
 		// must store depth as it is not passed to PacSim
-		this.depth = depth
+		this.depth = depth;
 		
 		PacSim sim = new PacSim( fname, te, gran, max );
 		sim.init( this );
@@ -68,13 +68,13 @@ public class PacSimMinimax implements PacAction
 	
 	public PacFace generateMove( PacCell[][] grid )
 	{
-		currentDepth = 0;
+		this.currentDepth = 0;
 		
-		
-		return miniMax( grid );
+		//return miniMax( grid );
+		return null;
 	}
 	
-	public miniMax( PacCell[][] grid, int alpha, int beta )
+	public int miniMax( PacCell[][] grid, int alpha, int beta )
 	{
 		// terminal node
 		if( currentDepth == this.depth )
@@ -84,51 +84,51 @@ public class PacSimMinimax implements PacAction
 		// MAX's turn to move
 		else if( currentDepth % 2 == 1 )
 		{
-			return maxValue( grid, alpha, beta )
+			return maxValue( grid, alpha, beta );
 		}
 		// MIN's turn to move
 		else
 		{
-			return minValue( grid, alpha, beta )
+			return minValue( grid, alpha, beta );
 		}
 	}
 	
 	// returns largest game-state value selected by ideal rational agent
-	public maxValue( PacCell[][] grid, int alpha, int beta )
+	public int maxValue( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MIN_VALUE;
 		
-		for( PacCell[][] move : possibleMoves )
-		{
-			v = Math.max( v, miniMax( move, alpha, beta ) );
+		// for( PacCell[][] move : possibleMoves )
+		// {
+			// v = Math.max( v, miniMax( move, alpha, beta ) );
 			
-			if( v >= beta )
-			{
-				return v;
-			}
+			// if( v >= beta )
+			// {
+				// return v;
+			// }
 			
-			alpha = Math.max( alpha, v );
-		}
+			// alpha = Math.max( alpha, v );
+		// }
 		
 		return v;
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public minValue( PacCell[][] grid, int alpha, int beta )
+	public int minValue( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MAX_VALUE;
 		
-		for( PacCell[][] move : possibleMoves )
-		{
-			v = Math.min( v, miniMax( move, alpha, beta ) );
+		// for( PacCell[][] move : possibleMoves )
+		// {
+			// v = Math.min( v, miniMax( move, alpha, beta ) );
 			
-			if( v <= alpha )
-			{
-				return v;
-			}
+			// if( v <= alpha )
+			// {
+				// return v;
+			// }
 			
-			beta = Math.min( beta, v );
-		}
+			// beta = Math.min( beta, v );
+		// }
 		
 		return v;
 	}
@@ -176,18 +176,19 @@ public class PacSimMinimax implements PacAction
 		}
 	}
 	
-	@Overridepublic void init( void ) {}
+	@Override
+	public void init() {}
 	
 	@Override
 	public PacFace action( Object state )
 	{
-		PacCell[][] grid = (PacCel[][]) state;
+		PacCell[][] grid = (PacCell[][]) state;
 		PacFace newFace = null;
 		
 		// store location of PacMan and ghosts
 		this.pc = PacUtils.findPacman( grid );
-		this.ghostA = PacUtils.findPacman( grid ).get(0);
-		this.ghostB = PacUtils.findPacman( grid ).get(1);
+		this.ghostA = PacUtils.findGhosts( grid ).get(0);
+		this.ghostB = PacUtils.findGhosts( grid ).get(1);
 		
 		//TODO
 		
