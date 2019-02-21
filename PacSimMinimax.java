@@ -165,7 +165,7 @@ public class PacSimMinimax implements PacAction
 		
 		System.out.println("\nAdversarial Search using Minimax by Matthew Saucedo and Daniel Canas");
 		System.out.println("\n\tGame board\t: " + fname);
-		System.out.println("\tSearch depth : " + depth + "\n");
+		System.out.println("\tSearch depth\t: " + depth + "\n");
 		
 		if( te > 0 ) 
 		{
