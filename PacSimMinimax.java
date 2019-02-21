@@ -1,7 +1,7 @@
 /* 
  * University of Central Florida
  * CAP4630
- * Authors: Matthew Saucedo
+ * Authors: Matthew Saucedo and Daniel Canas
  *
  */
 
@@ -49,9 +49,13 @@ class pacRun
 	}
 }
 
+/* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
 {
 	int depth;
+	PacmanCell pc;
+	Point ghostA;
+	Point ghostB;
 	
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
 	{
@@ -62,49 +66,78 @@ public class PacSimMinimax implements PacAction
 		sim.init( this );
 	}
 	
-	public miniMax( void )
+	public PacFace generateMove( PacCell[][] grid )
 	{
-		return value();
+		currentDepth = 0;
+		
+		
+		return miniMax( grid );
 	}
 	
-	public value()
+	public miniMax( PacCell[][] grid, int alpha, int beta )
 	{
-		if( /*state == terminal*/ )
+		// terminal node
+		if( currentDepth == this.depth )
 		{
-			return /*the state's utility*/
+			return evalFunction( grid );
 		}
-		else if( /*MAX's turn to move*/ )
+		// MAX's turn to move
+		else if( currentDepth % 2 == 1 )
 		{
-			return maxValue( /*state*/ )
+			return maxValue( grid, alpha, beta )
 		}
+		// MIN's turn to move
 		else
 		{
-			return maxValue( /*state*/ )
+			return minValue( grid, alpha, beta )
 		}
 	}
 	
-	public maxValue( /*state*/ )
+	// returns largest game-state value selected by ideal rational agent
+	public maxValue( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MIN_VALUE;
 		
-		for(/*each successor s' of s*/)
+		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.max( v, value( s' ) );
+			v = Math.max( v, miniMax( move, alpha, beta ) );
+			
+			if( v >= beta )
+			{
+				return v;
+			}
+			
+			alpha = Math.max( alpha, v );
 		}
 		
 		return v;
 	}
 	
-	public minValue( /*state*/ )
+	// returns smallest game-state value selected by ideal rational agent
+	public minValue( PacCell[][] grid, int alpha, int beta )
 	{
 		int v = Integer.MAX_VALUE;
 		
-		for(/*each successor s' of s*/)
+		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.min( v, value( s' ) );
+			v = Math.min( v, miniMax( move, alpha, beta ) );
+			
+			if( v <= alpha )
+			{
+				return v;
+			}
+			
+			beta = Math.min( beta, v );
 		}
 		
 		return v;
+	}
+	
+	// used to assign value to any given game-state 
+	public int evalFunction( PacCell[][] grid )
+	{
+		// returns current score
+		return PacUtils.numFood( grid ) + PacUtils.numPower( grid );
 	}
 	
 	public static void main( String[] args )
@@ -130,7 +163,7 @@ public class PacSimMinimax implements PacAction
 		
 		new PacSimMinimax( depth, fname, te, gr, ml );
 		
-		System.out.println("\nAdversarial Search using Minimax by Matthew Saucedo");
+		System.out.println("\nAdversarial Search using Minimax by Matthew Saucedo and Daniel Canas");
 		System.out.println("\n\tGame board\t: " + fname);
 		System.out.println("\tSearch depth : " + depth + "\n");
 		
@@ -151,8 +184,25 @@ public class PacSimMinimax implements PacAction
 		PacCell[][] grid = (PacCel[][]) state;
 		PacFace newFace = null;
 		
+		// store location of PacMan and ghosts
+		this.pc = PacUtils.findPacman( grid );
+		this.ghostA = PacUtils.findPacman( grid ).get(0);
+		this.ghostB = PacUtils.findPacman( grid ).get(1);
+		
 		//TODO
+		
+		//return generateMove( grid );
 		
 		return newFace;
 	}
+	
+	/*
+	
+	* you can calculate current game score by counting how many goodies there are left.
+	
+	* you need to use moveGhost and movePacman in this assignment.
+	
+	* you can check if the object is an instanceof WallCell
+	
+	*/
 }
