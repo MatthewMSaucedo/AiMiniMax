@@ -6,6 +6,12 @@ To run this Pac-Man MiniMax agent
 1) Open a command prompt/terminal 
 2) Navigate to the folder that contains this repository  
 3) type the following:
-	java -jar PacSimMiniMax.jar MAP
+	java -jar PacSimMinimax.jar game-small-new DEPTH
+			OR	
+	java -jar PacSimMinimax.jar game-small-new DEPTH EPOCHS GRANULARITY MAX_MOVES
 	
-	where MAP = the desired map for pacman to navigate.
+	where, 
+	DEPTH = integer indicating max depth to use for MiniMax
+	EPOCHS = integer indicating number of simulation epochs
+	GRANULARITY = integer indicating granularity for training epoch statistics
+	MAX_MOVES = integer indicating max number of moves allowed by PacMan
