@@ -14,6 +14,8 @@ import pacsim.PacFace;
 import pacsim.PacSim;
 import pacsim.PacUtils;
 import pacsim.PacmanCell;
+import pacsim.BlinkyCell;
+import pacsim.InkyCell;
 
 // class to keep track of each simulation run
 class pacRun 
@@ -54,8 +56,31 @@ public class PacSimMinimax implements PacAction
 {
 	int depth, currentDepth, initialGoodies = 96;
 	PacmanCell pc;
-	Point ghostA;
-	Point ghostB;
+	PacCell blinky;
+	PacCell inky;
+	
+	// updates class variables holding locations of ghosts
+	public void getGhostLocations( PacCell[][] grid )
+	{
+		// store first ghost location
+		int x1 = PacUtils.findGhosts( grid ).get(0).x;
+		int y1 = PacUtils.findGhosts( grid ).get(0).y;
+		
+		// store second ghost location
+		int x2 = PacUtils.findGhosts( grid ).get(1).x;
+		int y2 = PacUtils.findGhosts( grid ).get(1).y;
+		
+		if( grid[x1][y1] instanceof BlinkyCell )
+		{
+			this.blinky = grid[x1][y1];
+			this.inky = grid[x2][y2];
+		}
+		else
+		{
+			this.blinky = grid[x2][y2];
+			this.inky = grid[x1][y1];
+		}
+	}
 	
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
 	{
@@ -85,7 +110,7 @@ public class PacSimMinimax implements PacAction
 	{
 		this.currentDepth = 0;
 		
-		//return miniMax( grid );
+		//return miniMax( grid, Integer.MIN_VALUE, Integer.MAX_VALUE );
 		return null;
 	}
 	
@@ -233,10 +258,11 @@ public class PacSimMinimax implements PacAction
 		
 		// store location of PacMan and ghosts
 		this.pc = PacUtils.findPacman( grid );
-		this.ghostA = PacUtils.findGhosts( grid ).get(0);
-		this.ghostB = PacUtils.findGhosts( grid ).get(1);
+		getGhostLocations( grid );
 		
 		//TODO
+		//DEBUG
+		System.out.println("Blinky Loc: " + this.blinky.getLoc() + "\nInk Loc: " + this.inky.getLoc() );
 		
 		//return generateMove( grid );
 		
