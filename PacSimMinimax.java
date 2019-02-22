@@ -171,28 +171,28 @@ public class PacSimMinimax implements PacAction
 		int y = blinky.getY();
 		
 		// check cell above Blinky
-		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
+		if( !(grid[x][y+1] instanceof WallCell) )
 		{
 			next = new Point( x, y+1 );
 			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell below Blinky
-		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
+		if( !(grid[x][y-1] instanceof WallCell) )
 		{
 			next = new Point( x, y-1 );
 			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of Blinky
-		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
+		if( !(grid[x+1][y] instanceof WallCell) )
 		{
 			next = new Point( x+1, y );
 			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of Blinky
-		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
+		if( !(grid[x-1][y] instanceof WallCell) )
 		{
 			next = new Point( x-1, y );
 			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
@@ -213,28 +213,28 @@ public class PacSimMinimax implements PacAction
 		int y = inky.getY();
 		
 		// check cell above Inky
-		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
+		if( !(grid[x][y+1] instanceof WallCell) )
 		{
 			next = new Point( x, y+1 );
 			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell below Inky
-		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
+		if( !(grid[x][y-1] instanceof WallCell) )
 		{
 			next = new Point( x, y-1 );
 			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of Inky
-		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
+		if( !(grid[x+1][y] instanceof WallCell) )
 		{
 			next = new Point( x+1, y );
 			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of Inky
-		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
+		if( !(grid[x-1][y] instanceof WallCell) )
 		{
 			next = new Point( x-1, y );
 			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
@@ -453,6 +453,11 @@ public class PacSimMinimax implements PacAction
 		//TODO
 		//DEBUG
 		//System.out.println("Blinky Loc: " + this.blinky.getLoc() + "\nInk Loc: " + this.inky.getLoc() );
+		
+		// test inky location
+		// test pacman location 
+		// test blinky location
+		// test possible moves that are generated
 		
 		//return generateMove( grid );
 		
