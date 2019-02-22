@@ -297,17 +297,17 @@ public class PacSimMinimax implements PacAction
 		
 		List<PacCell[][]> possibleMoves = generatePossibleMovesInky( grid );
 		
-		// for( PacCell[][] move : possibleMoves )
-		// {
-			// v = Math.min( v, miniMax( move, alpha, beta ) );
+		for( PacCell[][] move : possibleMoves )
+		{
+			v = Math.min( v, miniMax( move, alpha, beta ) );
 			
-			// if( v <= alpha )
-			// {
-				// return v;
-			// }
+			if( v <= alpha )
+			{
+				return v;
+			}
 			
-			// beta = Math.min( beta, v );
-		// }
+			beta = Math.min( beta, v );
+		}
 		
 		return v;
 	}
