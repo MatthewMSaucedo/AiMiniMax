@@ -105,28 +105,28 @@ public class PacSimMinimax implements PacAction
 		// check cell above PacMan
 		if( !(grid[pcX][pcY+1] instanceof WallCell) && !(grid[pcX][pcY+1] instanceof HouseCell) && !(grid[pcX][pcY+1] instanceof GhostCell) )
 		{
-			next = new Point( pcX, pcY+1);
+			next = new Point( pcX, pcY+1 );
 			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell below PacMan
 		if( !(grid[pcX][pcY-1] instanceof WallCell) && !(grid[pcX][pcY-1] instanceof HouseCell) && !(grid[pcX][pcY-1] instanceof GhostCell) )
 		{
-			next = new Point( pcX, pcY-1);
+			next = new Point( pcX, pcY-1 );
 			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of PacMan
 		if( !(grid[pcX+1][pcY] instanceof WallCell) && !(grid[pcX+1][pcY] instanceof HouseCell) && !(grid[pcX+1][pcY] instanceof GhostCell) )
 		{
-			next = new Point( pcX+1, pcY);
+			next = new Point( pcX+1, pcY );
 			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of PacMan
 		if( !(grid[pcX-1][pcY] instanceof WallCell) && !(grid[pcX-1][pcY] instanceof HouseCell) && !(grid[pcX-1][pcY] instanceof GhostCell) )
 		{
-			next = new Point( pcX-1, pcY);
+			next = new Point( pcX-1, pcY );
 			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
 		}
 		
@@ -135,12 +135,80 @@ public class PacSimMinimax implements PacAction
 	
 	public List<PacCell[][]> generatePossibleMovesBlinky( PacCell[][] grid )
 	{
-		return null;
+		List<PacCell[][]> possibleMoves = new ArrayList<>();
+		
+		int x = this.blinky.getX();
+		int y = this.blinky.getY();
+		Point next;
+		
+		// check cell above Blinky
+		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
+		{
+			next = new Point( x, y+1 );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell below Blinky
+		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
+		{
+			next = new Point( x, y-1 );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the right of Blinky
+		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
+		{
+			next = new Point( x+1, y );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the left of Blinky
+		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
+		{
+			next = new Point( x-1, y );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		return possibleMoves;
 	}
 	
 	public List<PacCell[][]> generatePossibleMovesInky( PacCell[][] grid )
 	{
-		return null;
+		List<PacCell[][]> possibleMoves = new ArrayList<>();
+		
+		int x = this.inky.getX();
+		int y = this.inky.getY();
+		Point next;
+		
+		// check cell above Inky
+		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
+		{
+			next = new Point( x, y+1 );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell below Inky
+		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
+		{
+			next = new Point( x, y-1 );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the right of Inky
+		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
+		{
+			next = new Point( x+1, y );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		// check cell to the left of Inky
+		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
+		{
+			next = new Point( x-1, y );
+			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+		}
+		
+		return possibleMoves;
 	}
 	
 	public PacFace generateMove( PacCell[][] grid )
