@@ -94,6 +94,7 @@ public class PacSimMinimax implements PacAction
 		sim.init( this );
 	}
 	
+	// returns list of grid with possible moves of Pacman
 	public List<PacCell[][]> generatePossibleMovesPac( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
@@ -133,6 +134,7 @@ public class PacSimMinimax implements PacAction
 		return possibleMoves;
 	}
 	
+	// returns list of grid with possible moves of Blinky
 	public List<PacCell[][]> generatePossibleMovesBlinky( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
@@ -172,6 +174,7 @@ public class PacSimMinimax implements PacAction
 		return possibleMoves;
 	}
 	
+	// returns list of grid with possible moves of Inky
 	public List<PacCell[][]> generatePossibleMovesInky( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
@@ -250,17 +253,17 @@ public class PacSimMinimax implements PacAction
 		
 		List<PacCell[][]> possibleMoves = generatePossibleMovesPac( grid );
 		
-		// for( PacCell[][] move : possibleMoves )
-		// {
-			// v = Math.max( v, miniMax( move, alpha, beta ) );
+		for( PacCell[][] move : possibleMoves )
+		{
+			v = Math.max( v, miniMax( move, alpha, beta ) );
 			
-			// if( v >= beta )
-			// {
-				// return v;
-			// }
+			if( v >= beta )
+			{
+				return v;
+			}
 			
-			// alpha = Math.max( alpha, v );
-		// }
+			alpha = Math.max( alpha, v );
+		}
 		
 		return v;
 	}
@@ -272,17 +275,17 @@ public class PacSimMinimax implements PacAction
 		
 		List<PacCell[][]> possibleMoves = generatePossibleMovesBlinky( grid );
 		
-		// for( PacCell[][] move : possibleMoves )
-		// {
-			// v = Math.min( v, miniMax( move, alpha, beta ) );
+		for( PacCell[][] move : possibleMoves )
+		{
+			v = Math.min( v, miniMax( move, alpha, beta ) );
 			
-			// if( v <= alpha )
-			// {
-				// return v;
-			// }
+			if( v <= alpha )
+			{
+				return v;
+			}
 			
-			// beta = Math.min( beta, v );
-		// }
+			beta = Math.min( beta, v );
+		}
 		
 		return v;
 	}
