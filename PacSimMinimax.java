@@ -58,9 +58,10 @@ class pacRun
 public class PacSimMinimax implements PacAction
 {
 	int depth, initialGoodies = 96;
-	PacmanCell pc;
-	PacCell blinky;
-	PacCell inky;
+	//PacmanCell pc;
+	//PacCell blinky;
+	//PacCell inky;
+	PacCell[][] chosenMove;	
 	
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
 	{
@@ -72,26 +73,47 @@ public class PacSimMinimax implements PacAction
 		sim.init( this );
 	}
 	
-	// updates class variables holding locations of ghosts
-	public void getGhostLocations( PacCell[][] grid )
+	public PacCell getBlinkyLocation( PacCell[][] grid )
 	{
+		List<Point> ghosts = PacUtils.findGhosts( grid );
+		
 		// store first ghost location
-		int x1 = PacUtils.findGhosts( grid ).get(0).x;
-		int y1 = PacUtils.findGhosts( grid ).get(0).y;
+		int x1 = ghosts.get(0).x;
+		int y1 = ghosts.get(0).y;
 		
 		// store second ghost location
-		int x2 = PacUtils.findGhosts( grid ).get(1).x;
-		int y2 = PacUtils.findGhosts( grid ).get(1).y;
+		int x2 = ghosts.get(1).x;
+		int y2 = ghosts.get(1).y;
 		
 		if( grid[x1][y1] instanceof BlinkyCell )
 		{
-			this.blinky = grid[x1][y1];
-			this.inky = grid[x2][y2];
+			return grid[x1][y1];
 		}
 		else
 		{
-			this.blinky = grid[x2][y2];
-			this.inky = grid[x1][y1];
+			return grid[x2][y2];
+		}
+	}
+	
+	public PacCell getInkyLocation( PacCell[][] grid )
+	{
+		List<Point> ghosts = PacUtils.findGhosts( grid );
+		
+		// store first ghost location
+		int x1 = ghosts.get(0).x;
+		int y1 = ghosts.get(0).y;
+		
+		// store second ghost location
+		int x2 = ghosts.get(1).x;
+		int y2 = ghosts.get(1).y;
+		
+		if( grid[x1][y1] instanceof InkyCell )
+		{
+			return grid[x1][y1];
+		}
+		else
+		{
+			return grid[x2][y2];
 		}
 	}
 	
@@ -99,37 +121,39 @@ public class PacSimMinimax implements PacAction
 	public List<PacCell[][]> generatePossibleMovesPac( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
-		
-		int pcX = this.pc.getX();
-		int pcY = this.pc.getY();
 		Point next;
+		
+		// store location of Pacman on this grid
+		PacmanCell pc = PacUtils.findPacman( grid );
+		int pcX = pc.getX();
+		int pcY = pc.getY();
 		
 		// check cell above PacMan
 		if( !(grid[pcX][pcY+1] instanceof WallCell) && !(grid[pcX][pcY+1] instanceof HouseCell) && !(grid[pcX][pcY+1] instanceof GhostCell) )
 		{
 			next = new Point( pcX, pcY+1 );
-			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.movePacman( pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell below PacMan
 		if( !(grid[pcX][pcY-1] instanceof WallCell) && !(grid[pcX][pcY-1] instanceof HouseCell) && !(grid[pcX][pcY-1] instanceof GhostCell) )
 		{
 			next = new Point( pcX, pcY-1 );
-			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.movePacman( pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of PacMan
 		if( !(grid[pcX+1][pcY] instanceof WallCell) && !(grid[pcX+1][pcY] instanceof HouseCell) && !(grid[pcX+1][pcY] instanceof GhostCell) )
 		{
 			next = new Point( pcX+1, pcY );
-			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.movePacman( pc.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of PacMan
 		if( !(grid[pcX-1][pcY] instanceof WallCell) && !(grid[pcX-1][pcY] instanceof HouseCell) && !(grid[pcX-1][pcY] instanceof GhostCell) )
 		{
 			next = new Point( pcX-1, pcY );
-			possibleMoves.add( PacUtils.movePacman( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.movePacman( pc.getLoc(), next, grid ) );
 		}
 		
 		return possibleMoves;
@@ -139,37 +163,39 @@ public class PacSimMinimax implements PacAction
 	public List<PacCell[][]> generatePossibleMovesBlinky( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
-		
-		int x = this.blinky.getX();
-		int y = this.blinky.getY();
 		Point next;
+		
+		// store location of Blinky on this grid
+		PacCell blinky = getBlinkyLocation( grid );
+		int x = blinky.getX();
+		int y = blinky.getY();
 		
 		// check cell above Blinky
 		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
 		{
 			next = new Point( x, y+1 );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell below Blinky
 		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
 		{
 			next = new Point( x, y-1 );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of Blinky
 		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
 		{
 			next = new Point( x+1, y );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of Blinky
 		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
 		{
 			next = new Point( x-1, y );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( blinky.getLoc(), next, grid ) );
 		}
 		
 		return possibleMoves;
@@ -179,37 +205,39 @@ public class PacSimMinimax implements PacAction
 	public List<PacCell[][]> generatePossibleMovesInky( PacCell[][] grid )
 	{
 		List<PacCell[][]> possibleMoves = new ArrayList<>();
-		
-		int x = this.inky.getX();
-		int y = this.inky.getY();
 		Point next;
+		
+		// store location of Inky on this grid
+		PacCell inky = getInkyLocation( grid );
+		int x = inky.getX();
+		int y = inky.getY();
 		
 		// check cell above Inky
 		if( !(grid[x][y+1] instanceof WallCell) && !(grid[x][y+1] instanceof HouseCell) )
 		{
 			next = new Point( x, y+1 );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell below Inky
 		if( !(grid[x][y-1] instanceof WallCell) && !(grid[x][y-1] instanceof HouseCell) )
 		{
 			next = new Point( x, y-1 );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the right of Inky
 		if( !(grid[x+1][y] instanceof WallCell) && !(grid[x+1][y] instanceof HouseCell) )
 		{
 			next = new Point( x+1, y );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		// check cell to the left of Inky
 		if( !(grid[x-1][y] instanceof WallCell) && !(grid[x-1][y] instanceof HouseCell) )
 		{
 			next = new Point( x-1, y );
-			possibleMoves.add( PacUtils.moveGhost( this.pc.getLoc(), next, grid ) );
+			possibleMoves.add( PacUtils.moveGhost( inky.getLoc(), next, grid ) );
 		}
 		
 		return possibleMoves;
@@ -217,7 +245,10 @@ public class PacSimMinimax implements PacAction
 	
 	public PacFace generateMove( PacCell[][] grid )
 	{
-		//return miniMax( grid, Integer.MIN_VALUE, Integer.MAX_VALUE, 0 );
+		// this.chosenMove
+		// find pacman in chosenMove
+		// find pacman in current position
+		// PacUtils.direction( Point current, Point chosen)
 		return null;
 	}
 	
@@ -258,10 +289,12 @@ public class PacSimMinimax implements PacAction
 			
 			if( v >= beta )
 			{
+				this.chosenMove = move;		//hmmm
 				return v;
 			}
 			
 			alpha = Math.max( alpha, v );
+			this.chosenMove = move;			//hmmm
 		}
 		
 		return v;
@@ -414,12 +447,12 @@ public class PacSimMinimax implements PacAction
 		PacFace newFace = null;
 		
 		// store location of PacMan and ghosts
-		this.pc = PacUtils.findPacman( grid );
-		getGhostLocations( grid );
+		//this.pc = PacUtils.findPacman( grid );
+		//getGhostLocations( grid );
 		
 		//TODO
 		//DEBUG
-		System.out.println("Blinky Loc: " + this.blinky.getLoc() + "\nInk Loc: " + this.inky.getLoc() );
+		//System.out.println("Blinky Loc: " + this.blinky.getLoc() + "\nInk Loc: " + this.inky.getLoc() );
 		
 		//return generateMove( grid );
 		
