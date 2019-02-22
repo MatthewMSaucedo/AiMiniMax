@@ -314,10 +314,60 @@ public class PacSimMinimax implements PacAction
 	
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
-	{
-		// returns current score
-		return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
-	}
+    {
+        int rank = 0;
+        int distanceToNearestFood;
+        int distanceToNearestGhost;
+        int totalDistance = 0;
+        List<Point> foodArray;
+        PacmanCell pc = PacUtils.findPacman( grid );
+        Point pacLoc;
+        Point nearestFood;
+        GhostCell nearestGhost;
+
+        // Get PacMan's current location
+        pacLoc = pc.getLoc();
+
+        // Find the closest ghost, closest pellet, and a list of all the remaining food pellets available
+        nearestFood = PacUtils.nearestGoody(pacLoc, grid);
+        nearestGhost = PacUtils.nearestGhost(pacLoc, grid);
+        foodArray = PacUtils.findFood(grid);
+
+        // Compute the distance between pacman and nearest food and ghost items
+        distanceToNearestFood = PacUtils.manhattanDistance(nearestFood, pacLoc);
+        distanceToNearestGhost = PacUtils.manhattanDistance(nearestGhost.getLoc(), pacLoc);
+
+        // Compute the total distance between pacman and all remaining food pellets
+        for (Point pellet : foodArray)
+        {
+            totalDistance = totalDistance + PacUtils.manhattanDistance(pacLoc, pellet);
+        }
+
+        // If the distance to the nearest ghost is less than 2 we return 0
+        if(distanceToNearestGhost < 2) 
+        {
+            return Integer.MIN_VALUE;
+        }
+        else 
+        {
+            rank = rank + 10;
+        }
+
+        rank = rank - (10 * distanceToNearestFood);
+        rank = rank - (10 * totalDistance);
+
+        if(distanceToNearestFood < distanceToNearestGhost)
+        {
+            rank = rank + 10;
+        }
+
+        if(distanceToNearestFood < 2)
+        {
+            rank = rank + 10;
+        }
+
+        return rank;
+    }
 	
 	public static void main( String[] args )
 	{
