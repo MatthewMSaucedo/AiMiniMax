@@ -57,10 +57,20 @@ class pacRun
 /* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
 {
-	int depth, currentDepth, initialGoodies = 96;
+	int depth, initialGoodies = 96;
 	PacmanCell pc;
 	PacCell blinky;
 	PacCell inky;
+	
+	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
+	{
+		// must store depth as it is not passed to PacSim
+		// as each layer of depth has 3 levels (min, max, max) we must mult by 3
+		this.depth = depth * 3;									
+		
+		PacSim sim = new PacSim( fname, te, gran, max );
+		sim.init( this );
+	}
 	
 	// updates class variables holding locations of ghosts
 	public void getGhostLocations( PacCell[][] grid )
@@ -83,15 +93,6 @@ public class PacSimMinimax implements PacAction
 			this.blinky = grid[x2][y2];
 			this.inky = grid[x1][y1];
 		}
-	}
-	
-	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
-	{
-		// must store depth as it is not passed to PacSim
-		this.depth = depth;
-		
-		PacSim sim = new PacSim( fname, te, gran, max );
-		sim.init( this );
 	}
 	
 	// returns list of grid with possible moves of Pacman
@@ -216,13 +217,11 @@ public class PacSimMinimax implements PacAction
 	
 	public PacFace generateMove( PacCell[][] grid )
 	{
-		this.currentDepth = 0;
-		
-		//return miniMax( grid, Integer.MIN_VALUE, Integer.MAX_VALUE );
+		//return miniMax( grid, Integer.MIN_VALUE, Integer.MAX_VALUE, 0 );
 		return null;
 	}
 	
-	public int miniMax( PacCell[][] grid, int alpha, int beta )
+	public int miniMax( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
 		// terminal node
 		if( currentDepth == this.depth )
@@ -230,24 +229,24 @@ public class PacSimMinimax implements PacAction
 			return evalFunction( grid );
 		}
 		// MAX's turn to move
-		else if( currentDepth % 2 == 1 )
+		else if( currentDepth % 3 == 0 )
 		{
-			return maxValue( grid, alpha, beta );
+			return maxValue( grid, alpha, beta, currentDepth );
 		}
 		// Blinky's turn to move
-		else if( true )
+		else if( currentDepth == 1 || currentDepth == 4 || currentDepth == 7 || currentDepth == 10 )
 		{
-			return minValueBlinky( grid, alpha, beta );
+			return minValueBlinky( grid, alpha, beta, currentDepth );
 		}
 		// Inky's turn to move
 		else
 		{
-			return minValueInky( grid, alpha, beta );
+			return minValueInky( grid, alpha, beta, currentDepth );
 		}
 	}
 	
 	// returns largest game-state value selected by ideal rational agent
-	public int maxValue( PacCell[][] grid, int alpha, int beta )
+	public int maxValue( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
 		int v = Integer.MIN_VALUE;
 		
@@ -255,7 +254,7 @@ public class PacSimMinimax implements PacAction
 		
 		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.max( v, miniMax( move, alpha, beta ) );
+			v = Math.max( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
 			
 			if( v >= beta )
 			{
@@ -269,7 +268,7 @@ public class PacSimMinimax implements PacAction
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValueBlinky( PacCell[][] grid, int alpha, int beta )
+	public int minValueBlinky( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
 		
@@ -277,7 +276,7 @@ public class PacSimMinimax implements PacAction
 		
 		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.min( v, miniMax( move, alpha, beta ) );
+			v = Math.min( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
 			
 			if( v <= alpha )
 			{
@@ -291,7 +290,7 @@ public class PacSimMinimax implements PacAction
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValueInky( PacCell[][] grid, int alpha, int beta )
+	public int minValueInky( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
 		
@@ -299,7 +298,7 @@ public class PacSimMinimax implements PacAction
 		
 		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.min( v, miniMax( move, alpha, beta ) );
+			v = Math.min( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
 			
 			if( v <= alpha )
 			{
