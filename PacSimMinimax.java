@@ -5,6 +5,8 @@
  *
  */
 
+import java.util.Random;
+ 
 import java.awt.Point;
 import java.util.*;
 import pacsim.BFSPath;
@@ -58,9 +60,6 @@ class pacRun
 public class PacSimMinimax implements PacAction
 {
 	int depth, initialGoodies = 96;
-	//PacmanCell pc;
-	//PacCell blinky;
-	//PacCell inky;
 	PacCell[][] chosenMove;	
 	
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
@@ -249,13 +248,34 @@ public class PacSimMinimax implements PacAction
 		// find pacman in chosenMove
 		// find pacman in current position
 		// PacUtils.direction( Point current, Point chosen)
-		return null;
+		PacmanCell pcChosen = PacUtils.findPacman( this.chosenMove );
+		PacmanCell pcCurrent = PacUtils.findPacman( grid );
+		
+		return PacUtils.direction( pcCurrent.getLoc(), pcChosen.getLoc());
+		//return PacUtils.randomOpenForPacman( pcCurrent.getLoc(), grid );
 	}
 	
 	public int miniMax( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
+		
+		// store location of Pacman on this grid
+		PacmanCell pc = PacUtils.findPacman( grid );
+		int a = 0;
+		// make sure Pac-Man is in this game
+		if( pc == null )
+		{
+			a = 1;
+			System.out.println("!\n!\n!\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");				////////////////////////////////
+			System.out.println("Grid was passed to miniMax that does not contain PacMan");		
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n!\n!\n!");	
+			// return null;
+			
+		}
+		
+		
+		
 		// terminal node
-		if( currentDepth == this.depth )
+		if( currentDepth == this.depth || a == 1 )
 		{
 			return evalFunction( grid );
 		}
@@ -294,7 +314,7 @@ public class PacSimMinimax implements PacAction
 			}
 			
 			alpha = Math.max( alpha, v );
-			this.chosenMove = move;			//hmmm
+			//this.chosenMove = move;			//hmmm
 		}
 		
 		return v;
@@ -347,6 +367,7 @@ public class PacSimMinimax implements PacAction
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
+		/*
         int rank = 0;
         int distanceToNearestFood;
         int distanceToNearestGhost;
@@ -399,6 +420,10 @@ public class PacSimMinimax implements PacAction
         }
 
         return rank;
+		*/
+		//return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
+		Random random = new Random();
+		return random.nextInt(10 - 1 + 1) + 1;
     }
 	
 	public static void main( String[] args )
@@ -446,21 +471,64 @@ public class PacSimMinimax implements PacAction
 		PacCell[][] grid = (PacCell[][]) state;
 		PacFace newFace = null;
 		
-		// store location of PacMan and ghosts
-		//this.pc = PacUtils.findPacman( grid );
-		//getGhostLocations( grid );
-		
-		//TODO
 		//DEBUG
-		//System.out.println("Blinky Loc: " + this.blinky.getLoc() + "\nInk Loc: " + this.inky.getLoc() );
+		PacCell blinky = getBlinkyLocation(grid);
+		PacCell inky = getInkyLocation(grid);
+		PacmanCell pacman = PacUtils.findPacman(grid);
 		
-		// test inky location
-		// test pacman location 
-		// test blinky location
+		System.out.println(/*"Blinky Loc: " + blinky.getLoc() + "\nInk Loc: " + inky.getLoc() + */"\nPacman Loc: " + pacman.getLoc() );
+		
 		// test possible moves that are generated
+		List<PacCell[][]> possibleMovesBlinky = generatePossibleMovesBlinky(grid);
+		List<PacCell[][]> possibleMovesInky = generatePossibleMovesInky(grid);
+		List<PacCell[][]> possibleMovesPac = generatePossibleMovesPac(grid);
 		
-		//return generateMove( grid );
+		/*
+		// print possible moves INKY
+		System.out.println("\n\nPOSSIBLE MOVES Inky");
+		for( int i = 0; i < possibleMovesInky.size(); i++ )
+		{
+			System.out.println("Move " + i + ": " + getInkyLocation( possibleMovesInky.get(i) ).getLoc());
+		}
 		
-		return newFace;
+		// print possible moves BLINKY
+		System.out.println("\n\nPOSSIBLE MOVES Blinky");
+		for( int i = 0; i < possibleMovesBlinky.size(); i++ )
+		{
+			System.out.println("Move " + i + ": " + getBlinkyLocation( possibleMovesBlinky.get(i) ).getLoc());
+		}
+		*/
+		// print possible moves PACMAN
+		System.out.println("\n\nPOSSIBLE MOVES Pacman");
+		for( int i = 0; i < possibleMovesPac.size(); i++ )
+		{
+			System.out.println("Move " + i + ": " + PacUtils.findPacman( possibleMovesPac.get(i) ).getLoc());
+		}
+		
+		System.out.println("hm");
+		int retVal = miniMax( grid, Integer.MAX_VALUE, Integer.MIN_VALUE, 0 );
+		System.out.println("hmMmMMM");
+		System.out.println("\nRETVAL: " + retVal);
+		return generateMove( grid );
+		
+		//return newFace;
+		
+		
+		/*
+		
+		
+		CURRENT ERROR
+		
+		For some reason, in miniMax()
+		
+		Ocassionally (when Pac gets stuck), there are grids passed to miniMax where Pacman doesn't exist on board...
+
+		if we switch this line with random PacFace, program no longer crashes, which shows this is the issue.
+		
+		
+		
+		*/
+		
+		
 	}
 }
