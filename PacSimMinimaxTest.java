@@ -1,4 +1,4 @@
-/* 
+/*
  * University of Central Florida
  * CAP4630
  * Authors: Matthew Saucedo and Daniel Canas
@@ -242,6 +242,19 @@ public class PacSimMinimax implements PacAction
 		return possibleMoves;
 	}
 	
+	// combine all possible moves of Pac, Blinky, and Inky
+	generatePossibleMoves( grid )
+	{
+		List<PacCell[][]> possibleMoves = new ArrayList<>();
+		
+		// get moves of Pac
+		possibleMoves = generatePossibleMovesPac( grid );
+		
+		generatePossibleMovesBlinky
+		generatePossibleMovesInky
+		
+	}
+	
 	public PacFace generateMove( PacCell[][] grid )
 	{
 		// this.chosenMove
@@ -257,33 +270,33 @@ public class PacSimMinimax implements PacAction
 	
 	public int miniMax( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
-		// make sure Pac-Man is in this game
+		
+		// store location of Pacman on this grid
 		PacmanCell pc = PacUtils.findPacman( grid );
-		boolean pacDead = false;;
+		int a = 0;
+		// make sure Pac-Man is in this game
 		if( pc == null )
 		{
-			pacDead = true;
+			a = 1;
+			System.out.println("!\n!\n!\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");				////////////////////////////////
+			System.out.println("Grid was passed to miniMax that does not contain PacMan");		
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n!\n!\n!");	
 		}
 		
 		// terminal node
-		if( currentDepth == this.depth || pacDead || !PacUtils.foodRemains( grid ))
+		if( currentDepth == this.depth || a == 1 )
 		{
 			return evalFunction( grid );
 		}
 		// MAX's turn to move
-		else if( currentDepth % 3 == 0 )
+		else if( currentDepth % 2 == 1 )
 		{
 			return maxValue( grid, alpha, beta, currentDepth );
 		}
-		// Blinky's turn to move
-		else if( currentDepth == 1 || currentDepth == 4 || currentDepth == 7 || currentDepth == 10 )
-		{
-			return minValueBlinky( grid, alpha, beta, currentDepth );
-		}
-		// Inky's turn to move
+		// MIN's turn to move
 		else
 		{
-			return minValueInky( grid, alpha, beta, currentDepth );
+			return minValue( grid, alpha, beta, currentDepth );
 		}
 	}
 	
@@ -292,7 +305,7 @@ public class PacSimMinimax implements PacAction
 	{
 		int v = Integer.MIN_VALUE;
 		
-		List<PacCell[][]> possibleMoves = generatePossibleMovesPac( grid );
+		List<PacCell[][]> possibleMoves = generatePossibleMoves( grid );
 		
 		for( PacCell[][] move : possibleMoves )
 		{
@@ -312,33 +325,11 @@ public class PacSimMinimax implements PacAction
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValueBlinky( PacCell[][] grid, int alpha, int beta, int currentDepth )
+	public int minValue( PacCell[][] grid, int alpha, int beta, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
 		
-		List<PacCell[][]> possibleMoves = generatePossibleMovesBlinky( grid );
-		
-		for( PacCell[][] move : possibleMoves )
-		{
-			v = Math.min( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
-			
-			if( v <= alpha )
-			{
-				return v;
-			}
-			
-			beta = Math.min( beta, v );
-		}
-		
-		return v;
-	}
-	
-	// returns smallest game-state value selected by ideal rational agent
-	public int minValueInky( PacCell[][] grid, int alpha, int beta, int currentDepth )
-	{
-		int v = Integer.MAX_VALUE;
-		
-		List<PacCell[][]> possibleMoves = generatePossibleMovesInky( grid );
+		List<PacCell[][]> possibleMoves = generatePossibleMoves( grid );
 		
 		for( PacCell[][] move : possibleMoves )
 		{
@@ -503,22 +494,6 @@ public class PacSimMinimax implements PacAction
 		return generateMove( grid );
 		
 		//return newFace;
-		
-		
-		/*
-		
-		
-		CURRENT ERROR
-		
-		For some reason, in miniMax()
-		
-		Ocassionally (when Pac gets stuck), there are grids passed to miniMax where Pacman doesn't exist on board...
-
-		if we switch this line with random PacFace, program no longer crashes, which shows this is the issue.
-		
-		
-		
-		*/
 		
 		
 	}
