@@ -22,37 +22,25 @@ import pacsim.WallCell;
 import pacsim.HouseCell;
 import pacsim.GhostCell;
 
-// class to keep track of each simulation run
-class pacRun 
+class ValueAndState
 {
-	public int wins, losses, moves;
+	int value;
+	PacCell[][] state;
 	
-	pacRun()
+	ValueAndState( int value, PacCell[][] grid )
 	{
-		this.wins = 0;
-		this.losses = 0;
-		this.moves = 0;
+		this.value = value;
+		this.state = grid;
 	}
 	
-	void win()
+	int getValue()
 	{
-		this.wins = 1;
+		return this.value;
 	}
 	
-	void lose()
+	PacCell[][] getState()
 	{
-		this.losses = 1;
-	}
-	
-	void move()
-	{
-		this.moves++;
-	}
-	
-	// formatting for displaying preliminary run results
-	void printResults()
-	{
-		System.out.println("\t" + this.wins + " wins,\t" + this.losses + " losses,\t" + this.moves + " avg moves");
+		return this.state;
 	}
 }
 
@@ -244,10 +232,6 @@ public class PacSimMinimax implements PacAction
 	
 	public PacFace generateMove( PacCell[][] grid )
 	{
-		// this.chosenMove
-		// find pacman in chosenMove
-		// find pacman in current position
-		// PacUtils.direction( Point current, Point chosen)
 		PacmanCell pcChosen = PacUtils.findPacman( this.chosenMove );
 		PacmanCell pcCurrent = PacUtils.findPacman( grid );
 		
@@ -255,7 +239,7 @@ public class PacSimMinimax implements PacAction
 		//return PacUtils.randomOpenForPacman( pcCurrent.getLoc(), grid );
 	}
 	
-	public int miniMax( PacCell[][] grid, int alpha, int beta, int currentDepth )
+	public int miniMax( PacCell[][] grid, int currentDepth )
 	{
 		// make sure Pac-Man is in this game
 		PacmanCell pc = PacUtils.findPacman( grid );
@@ -266,90 +250,82 @@ public class PacSimMinimax implements PacAction
 		}
 		
 		// terminal node
-		if( currentDepth == this.depth || pacDead || !PacUtils.foodRemains( grid ))
+		if( currentDepth == this.depth || pacDead || !PacUtils.foodRemains( grid ) )
 		{
 			return evalFunction( grid );
 		}
 		// MAX's turn to move
 		else if( currentDepth % 3 == 0 )
 		{
-			return maxValue( grid, alpha, beta, currentDepth );
+			return maxValue( grid, currentDepth );
 		}
 		// Blinky's turn to move
 		else if( currentDepth == 1 || currentDepth == 4 || currentDepth == 7 || currentDepth == 10 )
 		{
-			return minValueBlinky( grid, alpha, beta, currentDepth );
+			return minValueBlinky( grid, currentDepth );
 		}
 		// Inky's turn to move
 		else
 		{
-			return minValueInky( grid, alpha, beta, currentDepth );
+			return minValueInky( grid, currentDepth );
 		}
 	}
 	
 	// returns largest game-state value selected by ideal rational agent
-	public int maxValue( PacCell[][] grid, int alpha, int beta, int currentDepth )
+	public int maxValue( PacCell[][] grid, int currentDepth )
 	{
 		int v = Integer.MIN_VALUE;
-		
 		List<PacCell[][]> possibleMoves = generatePossibleMovesPac( grid );
+		int [] moveValue = new int [possibleMoves.size()];
 		
-		for( PacCell[][] move : possibleMoves )
+		for( int i = 0; i < possibleMoves.size(); i++ )
 		{
-			v = Math.max( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
+			v = Math.max( v, miniMax( possibleMoves.get(i), currentDepth + 1 ) );
 			
-			if( v >= beta )
-			{
-				this.chosenMove = move;		//hmmm
-				return v;
-			}
-			
-			alpha = Math.max( alpha, v );
-			//this.chosenMove = move;			//hmmm
+			moveValue[i] = v;
 		}
 		
+		for( int i = 0; i < possibleMoves.size(); i++ )
+		{
+			if( moveValue[i] == v )
+			{
+				this.chosenMove = possibleMoves.get(i);
+				break;
+			}
+		}
+		/*
+		SOMETHING LIKE
+		each move index has the v stored
+		after loop check v
+		this.chosenMove is equal to possibleMoves.get( that index )
+		
+		*/
 		return v;
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValueBlinky( PacCell[][] grid, int alpha, int beta, int currentDepth )
+	public int minValueBlinky( PacCell[][] grid, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
-		
+	
 		List<PacCell[][]> possibleMoves = generatePossibleMovesBlinky( grid );
-		
 		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.min( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
-			
-			if( v <= alpha )
-			{
-				return v;
-			}
-			
-			beta = Math.min( beta, v );
+			v = Math.min( v, miniMax( move, currentDepth + 1 ) );
 		}
 		
 		return v;
 	}
 	
 	// returns smallest game-state value selected by ideal rational agent
-	public int minValueInky( PacCell[][] grid, int alpha, int beta, int currentDepth )
+	public int minValueInky( PacCell[][] grid, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
-		
+	
 		List<PacCell[][]> possibleMoves = generatePossibleMovesInky( grid );
-		
 		for( PacCell[][] move : possibleMoves )
 		{
-			v = Math.min( v, miniMax( move, alpha, beta, currentDepth + 1 ) );
-			
-			if( v <= alpha )
-			{
-				return v;
-			}
-			
-			beta = Math.min( beta, v );
+			v = Math.min( v, miniMax( move, currentDepth + 1 ) );
 		}
 		
 		return v;
@@ -358,63 +334,9 @@ public class PacSimMinimax implements PacAction
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
-		/*
-        int rank = 0;
-        int distanceToNearestFood;
-        int distanceToNearestGhost;
-        int totalDistance = 0;
-        List<Point> foodArray;
-        PacmanCell pc = PacUtils.findPacman( grid );
-        Point pacLoc;
-        Point nearestFood;
-        GhostCell nearestGhost;
-
-        // Get PacMan's current location
-        pacLoc = pc.getLoc();
-
-        // Find the closest ghost, closest pellet, and a list of all the remaining food pellets available
-        nearestFood = PacUtils.nearestGoody(pacLoc, grid);
-        nearestGhost = PacUtils.nearestGhost(pacLoc, grid);
-        foodArray = PacUtils.findFood(grid);
-
-        // Compute the distance between pacman and nearest food and ghost items
-        distanceToNearestFood = PacUtils.manhattanDistance(nearestFood, pacLoc);
-        distanceToNearestGhost = PacUtils.manhattanDistance(nearestGhost.getLoc(), pacLoc);
-
-        // Compute the total distance between pacman and all remaining food pellets
-        for (Point pellet : foodArray)
-        {
-            totalDistance = totalDistance + PacUtils.manhattanDistance(pacLoc, pellet);
-        }
-
-        // If the distance to the nearest ghost is less than 2 we return 0
-        if(distanceToNearestGhost < 2) 
-        {
-            return Integer.MIN_VALUE;
-        }
-        else 
-        {
-            rank = rank + 10;
-        }
-
-        rank = rank - (10 * distanceToNearestFood);
-        rank = rank - (10 * totalDistance);
-
-        if(distanceToNearestFood < distanceToNearestGhost)
-        {
-            rank = rank + 10;
-        }
-
-        if(distanceToNearestFood < 2)
-        {
-            rank = rank + 10;
-        }
-
-        return rank;
-		*/
-		//return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
-		Random random = new Random();
-		return random.nextInt(10 - 1 + 1) + 1;
+		return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
+		//Random random = new Random();
+		//return random.nextInt(10 - 1 + 1) + 1;
     }
 	
 	public static void main( String[] args )
@@ -474,52 +396,18 @@ public class PacSimMinimax implements PacAction
 		List<PacCell[][]> possibleMovesInky = generatePossibleMovesInky(grid);
 		List<PacCell[][]> possibleMovesPac = generatePossibleMovesPac(grid);
 		
-		/*
-		// print possible moves INKY
-		System.out.println("\n\nPOSSIBLE MOVES Inky");
-		for( int i = 0; i < possibleMovesInky.size(); i++ )
-		{
-			System.out.println("Move " + i + ": " + getInkyLocation( possibleMovesInky.get(i) ).getLoc());
-		}
-		
-		// print possible moves BLINKY
-		System.out.println("\n\nPOSSIBLE MOVES Blinky");
-		for( int i = 0; i < possibleMovesBlinky.size(); i++ )
-		{
-			System.out.println("Move " + i + ": " + getBlinkyLocation( possibleMovesBlinky.get(i) ).getLoc());
-		}
-		*/
 		// print possible moves PACMAN
 		System.out.println("\n\nPOSSIBLE MOVES Pacman");
 		for( int i = 0; i < possibleMovesPac.size(); i++ )
 		{
 			System.out.println("Move " + i + ": " + PacUtils.findPacman( possibleMovesPac.get(i) ).getLoc());
 		}
-		
-		System.out.println("hm");
-		int retVal = miniMax( grid, Integer.MAX_VALUE, Integer.MIN_VALUE, 0 );
-		System.out.println("hmMmMMM");
+
+		int retVal = miniMax( grid, 0 );
+		System.out.println("\nPacman Chosen next move: " + PacUtils.findPacman( this.chosenMove ).getLoc() );
 		System.out.println("\nRETVAL: " + retVal);
 		return generateMove( grid );
 		
 		//return newFace;
-		
-		
-		/*
-		
-		
-		CURRENT ERROR
-		
-		For some reason, in miniMax()
-		
-		Ocassionally (when Pac gets stuck), there are grids passed to miniMax where Pacman doesn't exist on board...
-
-		if we switch this line with random PacFace, program no longer crashes, which shows this is the issue.
-		
-		
-		
-		*/
-		
-		
 	}
 }
