@@ -208,11 +208,15 @@ public class PacSimMinimax implements PacAction
 	
 	public PacFace generateMove( PacCell[][] grid )
 	{
+		// call minimax to generate chosenMove
+		miniMax( grid, 0 );
+		
+		// store pacman location in chosen move and current state
 		PacmanCell pcChosen = PacUtils.findPacman( this.chosenMove );
 		PacmanCell pcCurrent = PacUtils.findPacman( grid );
 		
+		// return direction Pacman must take to reach state in chosenMove
 		return PacUtils.direction( pcCurrent.getLoc(), pcChosen.getLoc());
-		//return PacUtils.randomOpenForPacman( pcCurrent.getLoc(), grid );
 	}
 	
 	public int miniMax( PacCell[][] grid, int currentDepth )
@@ -430,33 +434,14 @@ public class PacSimMinimax implements PacAction
 	@Override
 	public PacFace action( Object state )
 	{
+		// initialize state of pacman
 		PacCell[][] grid = (PacCell[][]) state;
 		PacFace newFace = null;
 		
-		// //DEBUG
-		// PacCell blinky = getBlinkyLocation(grid);
-		// PacCell inky = getInkyLocation(grid);
-		// PacmanCell pacman = PacUtils.findPacman(grid);
+		// move pacman
+		newFace = generateMove( grid );
 		
-		// System.out.println(/*"Blinky Loc: " + blinky.getLoc() + "\nInk Loc: " + inky.getLoc() + */"\nPacman Loc: " + pacman.getLoc() );
-		
-		// // test possible moves that are generated
-		// List<PacCell[][]> possibleMovesBlinky = generatePossibleMovesBlinky(grid);
-		// List<PacCell[][]> possibleMovesInky = generatePossibleMovesInky(grid);
-		// List<PacCell[][]> possibleMovesPac = generatePossibleMovesPac(grid);
-		
-		// // print possible moves PACMAN
-		// System.out.println("\n\nPOSSIBLE MOVES Pacman");
-		// for( int i = 0; i < possibleMovesPac.size(); i++ )
-		// {
-			// System.out.println("Move " + i + ": " + PacUtils.findPacman( possibleMovesPac.get(i) ).getLoc());
-		// }
-		
-		int retVal = miniMax( grid, 0 );
-		// System.out.println("\nPacman Chosen next move: " + PacUtils.findPacman( this.chosenMove ).getLoc() );
-		// System.out.println("\nRETVAL: " + retVal);
-		return generateMove( grid );
-		
-		//return newFace;
+		// return move
+		return newFace;
 	}
 }
