@@ -324,8 +324,8 @@ public class PacSimMinimax implements PacAction
 	public int evalFunction( PacCell[][] grid )
     {
 		/*
-		score = this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
-		return score + distanceToNearestFood + distanceToNearestGhost;
+		int score = this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
+		return score;
 		*/
 		int rank = 0;
         int distanceToNearestFood;
@@ -384,6 +384,7 @@ public class PacSimMinimax implements PacAction
         }
 
         return rank;
+		
 	}
 	
 	public static void main( String[] args )
@@ -431,28 +432,28 @@ public class PacSimMinimax implements PacAction
 		PacCell[][] grid = (PacCell[][]) state;
 		PacFace newFace = null;
 		
-		//DEBUG
-		PacCell blinky = getBlinkyLocation(grid);
-		PacCell inky = getInkyLocation(grid);
-		PacmanCell pacman = PacUtils.findPacman(grid);
+		// //DEBUG
+		// PacCell blinky = getBlinkyLocation(grid);
+		// PacCell inky = getInkyLocation(grid);
+		// PacmanCell pacman = PacUtils.findPacman(grid);
 		
-		System.out.println(/*"Blinky Loc: " + blinky.getLoc() + "\nInk Loc: " + inky.getLoc() + */"\nPacman Loc: " + pacman.getLoc() );
+		// System.out.println(/*"Blinky Loc: " + blinky.getLoc() + "\nInk Loc: " + inky.getLoc() + */"\nPacman Loc: " + pacman.getLoc() );
 		
-		// test possible moves that are generated
-		List<PacCell[][]> possibleMovesBlinky = generatePossibleMovesBlinky(grid);
-		List<PacCell[][]> possibleMovesInky = generatePossibleMovesInky(grid);
-		List<PacCell[][]> possibleMovesPac = generatePossibleMovesPac(grid);
+		// // test possible moves that are generated
+		// List<PacCell[][]> possibleMovesBlinky = generatePossibleMovesBlinky(grid);
+		// List<PacCell[][]> possibleMovesInky = generatePossibleMovesInky(grid);
+		// List<PacCell[][]> possibleMovesPac = generatePossibleMovesPac(grid);
 		
-		// print possible moves PACMAN
-		System.out.println("\n\nPOSSIBLE MOVES Pacman");
-		for( int i = 0; i < possibleMovesPac.size(); i++ )
-		{
-			System.out.println("Move " + i + ": " + PacUtils.findPacman( possibleMovesPac.get(i) ).getLoc());
-		}
-
+		// // print possible moves PACMAN
+		// System.out.println("\n\nPOSSIBLE MOVES Pacman");
+		// for( int i = 0; i < possibleMovesPac.size(); i++ )
+		// {
+			// System.out.println("Move " + i + ": " + PacUtils.findPacman( possibleMovesPac.get(i) ).getLoc());
+		// }
+		
 		int retVal = miniMax( grid, 0 );
-		System.out.println("\nPacman Chosen next move: " + PacUtils.findPacman( this.chosenMove ).getLoc() );
-		System.out.println("\nRETVAL: " + retVal);
+		// System.out.println("\nPacman Chosen next move: " + PacUtils.findPacman( this.chosenMove ).getLoc() );
+		// System.out.println("\nRETVAL: " + retVal);
 		return generateMove( grid );
 		
 		//return newFace;
