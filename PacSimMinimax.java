@@ -306,6 +306,20 @@ public class PacSimMinimax implements PacAction
 		return v;
 	}
 	
+	
+	/*
+	A comment block in the program fully describes how board positions are evaluated, 
+	including but not limited to the features used for evaluation and how they are weighted,
+	
+	
+	
+	
+	
+	
+	
+	
+	yup
+	*/
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
