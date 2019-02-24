@@ -315,22 +315,22 @@ public class PacSimMinimax implements PacAction
 	
 	
 	/*
-	A comment block in the program fully describes how board positions are evaluated, 
-	including but not limited to the features used for evaluation and how they are weighted,
-	
-	
-	
-	
-	
-	
-	
-	
-	yup
+	Our evalFunction is used to evaluate different board states and assign a weighted rank to them accordingly. First the
+    function checks if pacman is still in the game and if there is food left. If there is no food left we have won the game
+    and we can return that max rank possible. If pacman is no longer in the game we return the smallest possible rank. Next
+    our function takes into account the nearest food pellet to pacman and the nearest ghost. We also find the combined
+    distance between pacman and every pellet left in the game. If pacman is located less than 2 spaces away from a ghost,
+    we return the smallest possible rank. This is implemented to dissuade pacman from making moves that would leave him 2
+    spaces or less from a ghost. Next we subtract 3/4 of the total distance calculated from pacman to every pellet remaining.
+    This is used to make seek out pellets more aggressively in the beginning of the game. Next we add 10 to our rank if our
+    nearest food pellet is closer than the nearest ghost. This is to reward states that result in pellets being eaten while
+    keeping pacman safe. Finally we heavily reward states that eat pellets aggressively by adding a *5 multiplier. These
+    states are highly preferred by our function and get our win rate to about an average of 40%.
 	*/
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
-		int rank = 0;
+        int rank = 0;
         int distanceToNearestFood;
         int distanceToNearestGhost;
         int totalDistance = 0;
@@ -353,33 +353,30 @@ public class PacSimMinimax implements PacAction
             return Integer.MAX_VALUE;
         }
 
-        // Get PacMan's current location
+        // get PacMan's current location
         pacLoc = pc.getLoc();
 
-        // Find the closest ghost, closest pellet, and a list of all the remaining food pellets available
+        // find the closest ghost, closest pellet, and a list of all the remaining food pellets available
         nearestFood = PacUtils.nearestGoody(pacLoc, grid);
         nearestGhost = PacUtils.nearestGhost(pacLoc, grid);
         foodArray = PacUtils.findFood(grid);
 
-        // Compute the distance between pacman and nearest food and ghost items
+        // compute the distance between pacman and nearest food and ghost items
         distanceToNearestFood = PacUtils.manhattanDistance(nearestFood, pacLoc);
         distanceToNearestGhost = PacUtils.manhattanDistance(nearestGhost.getLoc(), pacLoc);
 
-        // Compute the total distance between pacman and all remaining food pellets
+        // compute the total distance between pacman and all remaining food pellets
         for (Point pellet : foodArray)
         {
             totalDistance = totalDistance + PacUtils.manhattanDistance(pacLoc, pellet);
         }
 
-        // If the distance to the nearest ghost is less than 2 we return 0
+        // if the distance to the nearest ghost is less than 2 we return 0
         if(distanceToNearestGhost < 2) 
         {
             return Integer.MIN_VALUE;
         }
 
-        //rank = rank - (10 * distanceToNearestFood);
-        //rank = rank - (0.50 * totalDistance);
-        //rank -= 0.75 * distanceToNearestFood;
         rank -= 0.75 * totalDistance;
 
         if(distanceToNearestFood < distanceToNearestGhost)
@@ -393,7 +390,8 @@ public class PacSimMinimax implements PacAction
         }
 
         return rank;
-	}
+
+    }
 	
 	public static void main( String[] args )
 	{
