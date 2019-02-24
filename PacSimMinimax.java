@@ -243,7 +243,7 @@ public class PacSimMinimax implements PacAction
 	{
 		// make sure Pac-Man is in this game
 		PacmanCell pc = PacUtils.findPacman( grid );
-		boolean pacDead = false;;
+		boolean pacDead = false;
 		if( pc == null )
 		{
 			pacDead = true;
@@ -278,6 +278,7 @@ public class PacSimMinimax implements PacAction
 		List<PacCell[][]> possibleMoves = generatePossibleMovesPac( grid );
 		int [] moveValue = new int [possibleMoves.size()];
 		
+		// for each possible move, call minimax and update top value (v) if applicable
 		for( int i = 0; i < possibleMoves.size(); i++ )
 		{
 			v = Math.max( v, miniMax( possibleMoves.get(i), currentDepth + 1 ) );
@@ -285,6 +286,8 @@ public class PacSimMinimax implements PacAction
 			moveValue[i] = v;
 		}
 		
+		// update chosenMove as the move which returned the largest v value 
+		// (AKA first move to return final v value, as the best value propagated forward)
 		for( int i = 0; i < possibleMoves.size(); i++ )
 		{
 			if( moveValue[i] == v )
@@ -293,13 +296,7 @@ public class PacSimMinimax implements PacAction
 				break;
 			}
 		}
-		/*
-		SOMETHING LIKE
-		each move index has the v stored
-		after loop check v
-		this.chosenMove is equal to possibleMoves.get( that index )
-		
-		*/
+	
 		return v;
 	}
 	
@@ -307,7 +304,8 @@ public class PacSimMinimax implements PacAction
 	public int minValueBlinky( PacCell[][] grid, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
-	
+		
+		// for each possible move, call minimax and update low value (v) if applicable
 		List<PacCell[][]> possibleMoves = generatePossibleMovesBlinky( grid );
 		for( PacCell[][] move : possibleMoves )
 		{
@@ -321,7 +319,8 @@ public class PacSimMinimax implements PacAction
 	public int minValueInky( PacCell[][] grid, int currentDepth )
 	{
 		int v = Integer.MAX_VALUE;
-	
+		
+		// for each possible move, call minimax and update low value (v) if applicable
 		List<PacCell[][]> possibleMoves = generatePossibleMovesInky( grid );
 		for( PacCell[][] move : possibleMoves )
 		{
@@ -334,10 +333,68 @@ public class PacSimMinimax implements PacAction
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
-		return this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
-		//Random random = new Random();
-		//return random.nextInt(10 - 1 + 1) + 1;
-    }
+		/*
+		score = this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
+		return score + distanceToNearestFood + distanceToNearestGhost;
+		*/
+		int rank = 0;
+        int distanceToNearestFood;
+        int distanceToNearestGhost;
+        int totalDistance = 0;
+        List<Point> foodArray;
+        PacmanCell pc = PacUtils.findPacman( grid );
+        Point pacLoc;
+        Point nearestFood;
+        GhostCell nearestGhost;
+		
+		// make sure Pac-Man is in this game
+		if( pc == null )
+		{
+			return Integer.MIN_VALUE;
+		}
+        // Get PacMan's current location
+        pacLoc = pc.getLoc();
+
+        // Find the closest ghost, closest pellet, and a list of all the remaining food pellets available
+        nearestFood = PacUtils.nearestGoody(pacLoc, grid);
+        nearestGhost = PacUtils.nearestGhost(pacLoc, grid);
+        foodArray = PacUtils.findFood(grid);
+
+        // Compute the distance between pacman and nearest food and ghost items
+        distanceToNearestFood = PacUtils.manhattanDistance(nearestFood, pacLoc);
+        distanceToNearestGhost = PacUtils.manhattanDistance(nearestGhost.getLoc(), pacLoc);
+
+        // Compute the total distance between pacman and all remaining food pellets
+        for (Point pellet : foodArray)
+        {
+            totalDistance = totalDistance + PacUtils.manhattanDistance(pacLoc, pellet);
+        }
+
+        // If the distance to the nearest ghost is less than 2 we return 0
+        if(distanceToNearestGhost < 2) 
+        {
+            return Integer.MIN_VALUE;
+        }
+        else 
+        {
+            rank = rank + 10;
+        }
+
+        rank = rank - (10 * distanceToNearestFood);
+        rank = rank - (10 * totalDistance);
+
+        if(distanceToNearestFood < distanceToNearestGhost)
+        {
+            rank = rank + 10;
+        }
+
+        if(distanceToNearestFood < 2)
+        {
+            rank = rank + 10;
+        }
+
+        return rank;
+	}
 	
 	public static void main( String[] args )
 	{
