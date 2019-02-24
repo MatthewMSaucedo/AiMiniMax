@@ -4,8 +4,6 @@
  * Authors: Matthew Saucedo and Daniel Canas
  *
  */
-
-import java.util.Random;
  
 import java.awt.Point;
 import java.util.*;
@@ -21,28 +19,6 @@ import pacsim.InkyCell;
 import pacsim.WallCell;
 import pacsim.HouseCell;
 import pacsim.GhostCell;
-
-class ValueAndState
-{
-	int value;
-	PacCell[][] state;
-	
-	ValueAndState( int value, PacCell[][] grid )
-	{
-		this.value = value;
-		this.state = grid;
-	}
-	
-	int getValue()
-	{
-		return this.value;
-	}
-	
-	PacCell[][] getState()
-	{
-		return this.state;
-	}
-}
 
 /* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
