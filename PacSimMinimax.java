@@ -268,15 +268,18 @@ public class PacSimMinimax implements PacAction
 		
 		// update chosenMove as the move which returned the largest v value 
 		// (AKA first move to return final v value, as the best value propagated forward)
-		for( int i = 0; i < possibleMoves.size(); i++ )
+		if( currentDepth == 0 )
 		{
-			if( moveValue[i] == v )
+			for( int i = 0; i < possibleMoves.size(); i++ )
 			{
-				this.chosenMove = possibleMoves.get(i);
-				break;
+				if( moveValue[i] == v )
+				{
+					this.chosenMove = possibleMoves.get(i);
+					break;
+				}
 			}
 		}
-	
+		
 		return v;
 	}
 	
