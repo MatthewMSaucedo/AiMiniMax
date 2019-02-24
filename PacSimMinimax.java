@@ -323,25 +323,29 @@ public class PacSimMinimax implements PacAction
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
-		/*
-		int score = this.initialGoodies - ( PacUtils.numFood( grid ) + PacUtils.numPower( grid ) );
-		return score;
-		*/
 		int rank = 0;
         int distanceToNearestFood;
         int distanceToNearestGhost;
         int totalDistance = 0;
+        int foodLeft = PacUtils.numFood(grid);
         List<Point> foodArray;
         PacmanCell pc = PacUtils.findPacman( grid );
         Point pacLoc;
         Point nearestFood;
         GhostCell nearestGhost;
-		
-		// make sure Pac-Man is in this game
-		if( pc == null )
-		{
-			return Integer.MIN_VALUE;
-		}
+
+        // make sure Pac-Man is in this game
+        if( pc == null )
+        {
+            return Integer.MIN_VALUE;
+        }
+
+        // if there is no food left we win the game
+        if (foodLeft == 0)
+        {
+            return Integer.MAX_VALUE;
+        }
+
         // Get PacMan's current location
         pacLoc = pc.getLoc();
 
@@ -365,26 +369,23 @@ public class PacSimMinimax implements PacAction
         {
             return Integer.MIN_VALUE;
         }
-        else 
-        {
-            rank = rank + 10;
-        }
 
-        rank = rank - (10 * distanceToNearestFood);
-        rank = rank - (10 * totalDistance);
+        //rank = rank - (10 * distanceToNearestFood);
+        //rank = rank - (0.50 * totalDistance);
+        //rank -= 0.75 * distanceToNearestFood;
+        rank -= 0.75 * totalDistance;
 
         if(distanceToNearestFood < distanceToNearestGhost)
         {
-            rank = rank + 10;
+            rank += 10;
         }
 
         if(distanceToNearestFood < 2)
         {
-            rank = rank + 10;
+            rank += 10 * 5;
         }
 
         return rank;
-		
 	}
 	
 	public static void main( String[] args )
