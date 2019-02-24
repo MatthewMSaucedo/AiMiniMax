@@ -15,3 +15,10 @@ To run this Pac-Man MiniMax agent
 	EPOCHS = integer indicating number of simulation epochs
 	GRANULARITY = integer indicating granularity for training epoch statistics
 	MAX_MOVES = integer indicating max number of moves allowed by PacMan
+
+	
+	******** COMPILE AND RUNWITHOUT JAR ********
+	javac -cp lib/PacSimLib.jar PacSimMinimax.java
+	
+	MAC: java -cp .:lib/PacSimLib.jar PacSimMinimax game-small-new DEPTH
+	PC: java -cp .;lib/PacSimLib.jar PacSimMinimax game-small-new DEPTH
