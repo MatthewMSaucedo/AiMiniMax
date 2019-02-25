@@ -1,8 +1,7 @@
 /* 
  * University of Central Florida
- * CAP4630
- * Authors: Matthew Saucedo and Daniel Canas
- *
+ * CAP4630 - Spring 2019
+ * Author(s): Matthew Saucedo and Daniel Canas
  */
  
 import java.awt.Point;
@@ -312,8 +311,7 @@ public class PacSimMinimax implements PacAction
 		
 		return v;
 	}
-	
-	
+		
 	/*
 	Our evalFunction is used to evaluate different board states and assign a weighted rank to them accordingly. First the
     function checks if pacman is still in the game and if there is food left. If there is no food left we have won the game
@@ -327,6 +325,7 @@ public class PacSimMinimax implements PacAction
     keeping pacman safe. Finally we heavily reward states that eat pellets aggressively by adding a *5 multiplier. These
     states are highly preferred by our function and get our win rate to about an average of 40%.
 	*/
+	
 	// used to assign value to any given game-state 
 	public int evalFunction( PacCell[][] grid )
     {
@@ -370,6 +369,9 @@ public class PacSimMinimax implements PacAction
         {
             totalDistance = totalDistance + PacUtils.manhattanDistance(pacLoc, pellet);
         }
+        
+        // we subtractt the initial amount of food pellets minus the food currently left on the board
+        rank = 50 * (initialGoodies - foodLeft);
 
         // if the distance to the nearest ghost is less than 2 we return 0
         if(distanceToNearestGhost < 2) 
