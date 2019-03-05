@@ -26,8 +26,8 @@ public class PacSimMinimax implements PacAction
 	
 	public PacSimMinimax( int depth, String fname, int te, int gran, int max )
 	{
-		// must store depth as it is not passed to PacSim
-		// as each layer of depth has 3 levels (min, max, max) we must mult by 3
+		// Must store depth as it is not passed to PacSim.
+		// As each layer of depth has 3 levels (min, min, max) we must mult by 3
 		this.depth = depth * 3;									
 		
 		PacSim sim = new PacSim( fname, te, gran, max );
