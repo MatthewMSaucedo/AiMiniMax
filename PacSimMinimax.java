@@ -19,7 +19,6 @@ import pacsim.WallCell;
 import pacsim.HouseCell;
 import pacsim.GhostCell;
 
-/* Need to implement possibleMoves of the looping for( PacCell[][] move : possibleMoves )*/
 public class PacSimMinimax implements PacAction
 {
 	int depth, initialGoodies = 96;
